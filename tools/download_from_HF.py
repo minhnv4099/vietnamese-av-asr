@@ -119,12 +119,17 @@ def download_from_hf(
             os.makedirs(file_output_dir, exist_ok=True)
 
         if overwrite or not os.path.exists(os.path.join(file_output_dir, file)):
-            fs.download(
-                f'{root}/{file}',
-                file_output_dir,
-                verbose=False,
-            )
-            logging.info(f'\tDownloaded to {file_output_dir}')
+            try:
+                fs.download(
+                    f'{root}/{file}',
+                    file_output_dir,
+                    verbose=False,
+                )
+                logging.info(f'\tDownloaded to {file_output_dir}')
+            except KeyboardInterrupt:
+                logging.info('\tInterrupted by user')
+                os.remove(os.path.join(file_output_dir, file))
+                exit()
         else:
             logging.info(f'\tFile exists in {file_output_dir}')
 
